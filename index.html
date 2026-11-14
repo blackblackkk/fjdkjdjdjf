@@ -139,8 +139,20 @@ let searchQuery = '';
 
 async function loadModels() {
   try {
-    const res = await fetch('models.json');
-    MODELS = await res.json();
+    MODELS = [];
+    for (let i = 1; i <= 7; i++) {
+      try {
+        const res = await fetch(`models${i}.json`);
+        if (res.ok) {
+          const chunk = await res.json();
+          MODELS = MODELS.concat(chunk);
+        }
+      } catch (e) {}
+    }
+    if (MODELS.length === 0) {
+      document.getElementById('list').innerHTML = '<div class="empty">Нет данных</div>';
+      return;
+    }
     renderTabs();
     renderList();
   } catch (e) {
